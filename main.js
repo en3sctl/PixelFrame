@@ -321,17 +321,20 @@ function renderEmptyState(title, description) {
     `
 }
 
-let carouselIntervals = []
+let carouselTimer = null
+let carouselCards = []
 
 function stopCollectionCarousels() {
-    carouselIntervals.forEach(id => clearInterval(id))
-    carouselIntervals = []
+    if (carouselTimer) clearInterval(carouselTimer)
+    carouselTimer = null
+    carouselCards = []
 }
 
 function startCollectionCarousels() {
     stopCollectionCarousels()
 
-    document.querySelectorAll('.collection-carousel').forEach((container, cardIndex) => {
+    // Collect all carousel-capable cards
+    document.querySelectorAll('.collection-carousel').forEach(container => {
         const images = JSON.parse(container.dataset.images || '[]')
         if (images.length <= 1) return
 
@@ -340,39 +343,38 @@ function startCollectionCarousels() {
         if (!img) return
 
         // Preload all images
-        images.forEach(src => { const i = new Image(); i.src = src })
+        images.forEach(src => { const p = new Image(); p.src = src })
 
-        let index = 0
-        const delay = cardIndex * 1200
-
-        // Create overlay image for crossfade
+        // Create overlay for crossfade
         const overlay = document.createElement('img')
         overlay.className = 'carousel-overlay'
         overlay.alt = img.alt
         container.appendChild(overlay)
 
-        // Preload all
-        images.forEach(src => { const i = new Image(); i.src = src })
-
-        const timeoutId = setTimeout(() => {
-            const intervalId = setInterval(() => {
-                index = (index + 1) % images.length
-                overlay.src = images[index]
-                overlay.classList.add('visible')
-
-                setTimeout(() => {
-                    img.src = images[index]
-                    overlay.classList.remove('visible')
-                }, 800)
-
-                dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
-            }, 4000)
-
-            carouselIntervals.push(intervalId)
-        }, delay)
-
-        carouselIntervals.push(timeoutId)
+        carouselCards.push({ container, img, overlay, dots, images, index: 0 })
     })
+
+    if (carouselCards.length === 0) return
+
+    // One card transitions at a time, round-robin
+    let turn = 0
+    carouselTimer = setInterval(() => {
+        const card = carouselCards[turn]
+        card.index = (card.index + 1) % card.images.length
+
+        card.overlay.src = card.images[card.index]
+        card.overlay.classList.add('visible')
+
+        setTimeout(() => {
+            card.img.src = card.images[card.index]
+            card.overlay.classList.remove('visible')
+        }, 800)
+
+        card.dots.forEach((dot, i) => dot.classList.toggle('active', i === card.index))
+
+        // Next card's turn
+        turn = (turn + 1) % carouselCards.length
+    }, 2500)
 }
 
 function renderCollectionsView(animateCards = true) {
