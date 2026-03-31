@@ -321,6 +321,39 @@ function renderEmptyState(title, description) {
     `
 }
 
+let carouselIntervals = []
+
+function stopCollectionCarousels() {
+    carouselIntervals.forEach(id => clearInterval(id))
+    carouselIntervals = []
+}
+
+function startCollectionCarousels() {
+    stopCollectionCarousels()
+
+    document.querySelectorAll('.collection-carousel').forEach(container => {
+        const images = JSON.parse(container.dataset.images || '[]')
+        if (images.length <= 1) return
+
+        const img = container.querySelector('img.carousel-active')
+        const dots = container.querySelectorAll('.carousel-dot-mini')
+        if (!img) return
+
+        let index = 0
+        const intervalId = setInterval(() => {
+            index = (index + 1) % images.length
+            img.style.opacity = '0'
+            setTimeout(() => {
+                img.src = images[index]
+                img.style.opacity = '1'
+            }, 250)
+            dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
+        }, 3000)
+
+        carouselIntervals.push(intervalId)
+    })
+}
+
 function renderCollectionsView(animateCards = true) {
     if (!productGrid || !catalogNav || !moreComing || !productDetail) return
 
@@ -348,13 +381,25 @@ function renderCollectionsView(animateCards = true) {
         const coverImage = collection.coverImage || ''
         const productCount = collection.products.length
 
+        // Collect product images for carousel (cover + first image of each product)
+        const carouselImages = [coverImage]
+        collection.products.forEach(p => {
+            const img = getCoverImage(p)
+            if (img && !carouselImages.includes(img)) carouselImages.push(img)
+        })
+
         return `
             <article class="product-card collection-card" data-action="open-collection" data-collection="${collection.slug}">
-                <div class="product-image">
+                <div class="product-image collection-carousel" data-images='${JSON.stringify(carouselImages)}'>
                     ${coverImage
-                        ? `<img src="${coverImage}" alt="${escapeHtml(collection.name)}">`
+                        ? `<img class="carousel-active" src="${coverImage}" alt="${escapeHtml(collection.name)}">`
                         : `<div class="no-image"><span>Görsel Yok</span></div>`
                     }
+                    ${carouselImages.length > 1 ? `
+                        <div class="carousel-dots-mini">
+                            ${carouselImages.map((_, i) => `<span class="carousel-dot-mini ${i === 0 ? 'active' : ''}"></span>`).join('')}
+                        </div>
+                    ` : ''}
                     <span class="collection-chip">${productCount} ürün</span>
                 </div>
                 <div class="product-info">
@@ -364,6 +409,9 @@ function renderCollectionsView(animateCards = true) {
             </article>
         `
     }).join('')
+
+    // Start auto-carousel for collection cards
+    startCollectionCarousels()
 
     if (animateCards) {
         gsap.killTweensOf('.collection-card')
@@ -375,6 +423,7 @@ function renderCollectionsView(animateCards = true) {
 }
 
 function renderCategoryView(collection, animateCards = true) {
+    stopCollectionCarousels()
     if (!productGrid || !catalogNav || !moreComing || !productDetail) return
 
     setSectionHeader(`${collection.name} Koleksiyonu`, `${collection.products.length} ürün seçeneği`)

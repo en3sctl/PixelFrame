@@ -403,6 +403,34 @@ img {
     cursor: pointer;
 }
 
+/* Collection Carousel */
+.collection-carousel img.carousel-active {
+    transition: opacity 0.25s ease;
+}
+
+.carousel-dots-mini {
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 5;
+}
+
+.carousel-dot-mini {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.35);
+    transition: all 0.3s;
+}
+
+.carousel-dot-mini.active {
+    background: var(--accent);
+    transform: scale(1.3);
+}
+
 .collection-card .product-info h3 {
     margin-bottom: 4px;
 }
