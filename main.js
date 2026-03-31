@@ -705,7 +705,9 @@ async function initializeCatalog() {
 
 // ===== Analytics Tracking =====
 const analyticsSessionId = sessionStorage.getItem('pf_sid') || (() => {
-    const id = Math.random().toString(36).slice(2) + Date.now().toString(36)
+    const arr = new Uint8Array(16)
+    crypto.getRandomValues(arr)
+    const id = Array.from(arr, b => b.toString(16).padStart(2, '0')).join('')
     sessionStorage.setItem('pf_sid', id)
     return id
 })()

@@ -692,27 +692,8 @@ if (!isLoginPage) {
   }
 
   // ===== Event Listeners =====
-  // ===== Category Migration =====
-  window.runCategoryMigration = async function() {
-    const data = await api.post('/products/admin/migrate-categories', {});
-    if (data && data.success) {
-      showToast(data.message);
-      loadProducts();
-    } else {
-      showToast(data?.message || 'Migration başarısız', 'error');
-    }
-  };
-
   document.addEventListener('DOMContentLoaded', () => {
-    // Run category migration once, then load products
-    if (!localStorage.getItem('pf_cat_migrated_v2')) {
-      api.post('/products/admin/migrate-categories', {}).then(() => {
-        localStorage.setItem('pf_cat_migrated_v2', '1');
-        loadProducts();
-      }).catch(() => loadProducts());
-    } else {
-      loadProducts();
-    }
+    loadProducts();
 
     // Sidebar page navigation
     document.querySelectorAll('.sidebar-nav .nav-item[data-page]').forEach(item => {

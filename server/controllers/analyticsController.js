@@ -12,19 +12,25 @@ export const trackEvent = async (req, res) => {
       return res.status(400).json({ success: false, message: 'type and page required' });
     }
 
+    // Validate page format (must start with /)
+    const safePage = String(page).replace(/[<>"'&]/g, '').slice(0, 500);
+    const safeReferrer = String(referrer || '').replace(/[<>"']/g, '').slice(0, 1000);
+    const safeTarget = String(target || '').replace(/[<>"']/g, '').slice(0, 200);
+    const safeSessionId = String(sessionId || '').replace(/[^a-z0-9]/gi, '').slice(0, 100);
+
     await Analytics.create({
       type: type === 'click' ? 'click' : 'pageview',
-      page: String(page).slice(0, 500),
-      referrer: String(referrer || '').slice(0, 1000),
+      page: safePage,
+      referrer: safeReferrer,
       userAgent: String(req.headers['user-agent'] || '').slice(0, 500),
       ip: req.ip || req.connection?.remoteAddress || '',
-      sessionId: String(sessionId || '').slice(0, 100),
-      target: String(target || '').slice(0, 200)
+      sessionId: safeSessionId,
+      target: safeTarget
     });
 
     res.json({ success: true });
   } catch (error) {
-    // Silent fail for tracking — don't break user experience
+    console.error('Analytics tracking error:', error);
     res.json({ success: true });
   }
 };

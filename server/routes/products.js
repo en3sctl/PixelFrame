@@ -7,8 +7,7 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
-  reorderProducts,
-  migrateCategories
+  reorderProducts
 } from '../controllers/productController.js';
 import { verifyToken } from '../middleware/auth.js';
 import { uploadLimiter } from '../middleware/rateLimit.js';
@@ -102,6 +101,5 @@ router.put(
 router.delete('/:id', verifyToken, validateProductId, deleteProduct);
 
 router.put('/admin/reorder', verifyToken, reorderProducts);
-router.post('/admin/migrate-categories', verifyToken, migrateCategories);
 
 export default router;
