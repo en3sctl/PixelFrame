@@ -1,8 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /api/
 
 # Sitemap
 Sitemap: https://pixelframe.com.tr/sitemap.xml
-
-# Crawl-delay (optional, for polite crawling)
-Crawl-delay: 1

@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Dashboard | PixelFrame Admin</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <img src="/assets/logoGif.gif" alt="PixelFrame" class="sidebar-logo">
+            <span class="sidebar-title">Admin</span>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="products">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                    <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                    <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                </svg>
+                <span>Ürünler</span>
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+                <span>İstatistikler</span>
+            </a>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <a href="/" class="nav-item" target="_blank">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    <polyline points="15 3 21 3 21 9"></polyline>
+                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                <span>Siteyi Görüntüle</span>
+            </a>
+            <button id="logoutBtn" class="nav-item logout">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+                <span>Çıkış</span>
+            </button>
+        </div>
+    </aside>
+    
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <header class="content-header">
+            <div class="header-left">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="12" x2="21" y2="12"></line>
+                        <line x1="3" y1="6" x2="21" y2="6"></line>
+                        <line x1="3" y1="18" x2="21" y2="18"></line>
+                    </svg>
+                </button>
+                <h1 class="page-title">Ürünler</h1>
+            </div>
+            <button class="btn-primary" id="addProductBtn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                <span>Yeni Ürün</span>
+            </button>
+        </header>
+        
+        <!-- Products Grid -->
+        <div class="products-container">
+            <div id="loadingState" class="loading-state">
+                <div class="spinner-large"></div>
+                <p>Ürünler yükleniyor...</p>
+            </div>
+            
+            <div id="emptyState" class="empty-state" style="display: none;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                </svg>
+                <h3>Henüz ürün yok</h3>
+                <p>İlk ürününüzü ekleyerek başlayın</p>
+                <button class="btn-primary" id="addFirstProductBtn">Ürün Ekle</button>
+            </div>
+            
+            <div id="productsGrid" class="admin-products-grid"></div>
+        </div>
+
+        <!-- Analytics Page -->
+        <div class="analytics-container" id="analyticsPage" style="display: none;">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-label">Bugün</span>
+                    <span class="stat-value" id="statTodayViews">-</span>
+                    <span class="stat-sub"><span id="statTodayUnique">-</span> tekil ziyaretçi</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Son 7 Gün</span>
+                    <span class="stat-value" id="statWeekViews">-</span>
+                    <span class="stat-sub"><span id="statWeekUnique">-</span> tekil ziyaretçi</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Son 30 Gün</span>
+                    <span class="stat-value" id="statMonthViews">-</span>
+                    <span class="stat-sub"><span id="statMonthUnique">-</span> tekil ziyaretçi</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Toplam</span>
+                    <span class="stat-value" id="statTotalViews">-</span>
+                    <span class="stat-sub"><span id="statTotalUnique">-</span> tekil ziyaretçi</span>
+                </div>
+            </div>
+
+            <div class="analytics-panels">
+                <div class="analytics-panel">
+                    <h3>Günlük Ziyaretler (Son 30 Gün)</h3>
+                    <div class="chart-container" id="dailyChart"></div>
+                </div>
+
+                <div class="analytics-row">
+                    <div class="analytics-panel">
+                        <h3>En Çok Ziyaret Edilen Sayfalar</h3>
+                        <div id="topPagesList" class="analytics-list"></div>
+                    </div>
+                    <div class="analytics-panel">
+                        <h3>Nereden Geliyorlar</h3>
+                        <div id="topReferrersList" class="analytics-list"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-panel">
+                    <h3>Son Tıklamalar</h3>
+                    <div id="recentClicksList" class="analytics-list"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Yeni Ürün</h2>
+                <button class="modal-close" id="closeModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            
+            <form id="productForm" class="product-form">
+                <input type="hidden" id="productId" name="productId">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productName">Ürün Adı *</label>
+                        <input type="text" id="productName" name="name" required maxlength="100" placeholder="Örn: QR Araç Numaratörü">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="productCategory">Kategori *</label>
+                        <select id="productCategory" name="category" required>
+                            <option value="" disabled selected>Kategori seçin...</option>
+                            <option value="Araç Aksesuarları">Araç Aksesuarları</option>
+                            <option value="Dekoratif">Dekoratif</option>
+                            <option value="Cüzdan & Aksesuar">Cüzdan & Aksesuar</option>
+                            <option value="Anahtarlık">Anahtarlık</option>
+                            <option value="Uçak Maketleri">Uçak Maketleri</option>
+                            <option value="CS2 Koleksiyonu">CS2 Koleksiyonu</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="productDescription">Açıklama</label>
+                    <textarea id="productDescription" name="description" maxlength="500" rows="3" placeholder="Ürün hakkında kısa bir açıklama..."></textarea>
+                    <span class="char-count"><span id="descCharCount">0</span>/500</span>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productOrder">Sıralama</label>
+                        <input type="number" id="productOrder" name="order" min="0" max="1000" value="0">
+                    </div>
+                    
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="productFeatured" name="featured">
+                            <span class="checkbox-custom"></span>
+                            <span>Öne Çıkan Ürün</span>
+                        </label>
+                        
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="productActive" name="isActive" checked>
+                            <span class="checkbox-custom"></span>
+                            <span>Aktif</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <!-- Image Upload -->
+                <div class="form-group">
+                    <label>Görseller <span class="hint">(Max 10 görsel, her biri max 5MB)</span></label>
+                    
+                    <div id="existingImages" class="existing-images"></div>
+                    
+                    <div class="image-upload-area" id="imageUploadArea">
+                        <input type="file" id="imageInput" name="images" multiple accept="image/*" class="hidden-input">
+                        <div class="upload-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            <p>Görselleri sürükleyip bırakın veya tıklayın</p>
+                            <span class="hint">JPG, PNG, GIF, WEBP</span>
+                        </div>
+                    </div>
+                    
+                    <div id="newImagePreviews" class="image-previews"></div>
+                    <p class="image-counter"><span id="imageCountInfo">0</span>/10 toplam görsel (mevcut + yeni)</p>
+                </div>
+                
+                <div id="formError" class="error-message" style="display: none;"></div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" id="cancelBtn">İptal</button>
+                    <button type="submit" class="btn-primary" id="saveBtn">
+                        <span class="btn-text">Kaydet</span>
+                        <span class="btn-loading" style="display: none;">
+                            <svg class="spinner" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-backdrop"></div>
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h2>Ürünü Sil</h2>
+                <button class="modal-close" id="closeDeleteModal">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Bu ürünü silmek istediğinizden emin misiniz?</p>
+                <p class="warning-text"><strong id="deleteProductName"></strong> kalıcı olarak silinecek.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" id="cancelDeleteBtn">İptal</button>
+                <button type="button" class="btn-danger" id="confirmDeleteBtn">
+                    <span class="btn-text">Sil</span>
+                    <span class="btn-loading" style="display: none;">
+                        <svg class="spinner" viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3" fill="none" stroke-dasharray="31.4 31.4" stroke-linecap="round"/>
+                        </svg>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+    
+    <script type="module" src="admin.js"></script>
+</body>
+</html>
