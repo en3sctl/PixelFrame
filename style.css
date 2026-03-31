@@ -412,7 +412,23 @@ img {
 .collection-carousel img.carousel-active {
     position: relative;
     z-index: 1;
-    will-change: transform;
+}
+
+.collection-carousel img.carousel-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+    pointer-events: none;
+}
+
+.collection-carousel img.carousel-overlay.visible {
+    opacity: 1;
 }
 
 .carousel-dots-mini {

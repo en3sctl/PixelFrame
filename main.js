@@ -343,42 +343,30 @@ function startCollectionCarousels() {
         images.forEach(src => { const i = new Image(); i.src = src })
 
         let index = 0
-        let sliding = false
-        const delay = cardIndex * 1000
+        const delay = cardIndex * 1200
+
+        // Create overlay image for crossfade
+        const overlay = document.createElement('img')
+        overlay.className = 'carousel-overlay'
+        overlay.alt = img.alt
+        container.appendChild(overlay)
+
+        // Preload all
+        images.forEach(src => { const i = new Image(); i.src = src })
+
         const timeoutId = setTimeout(() => {
             const intervalId = setInterval(() => {
-                if (sliding) return
-                sliding = true
                 index = (index + 1) % images.length
+                overlay.src = images[index]
+                overlay.classList.add('visible')
 
-                // Preload next image
-                const nextImg = new Image()
-                nextImg.src = images[index]
-                nextImg.onload = () => {
-                    img.style.transition = 'none'
-                    img.style.transform = 'translateX(0)'
-
-                    // Force reflow
-                    void img.offsetWidth
-
-                    img.style.transition = 'transform 0.6s ease'
-                    img.style.transform = 'translateX(-100%)'
-
-                    setTimeout(() => {
-                        img.style.transition = 'none'
-                        img.src = images[index]
-                        img.style.transform = 'translateX(100%)'
-                        void img.offsetWidth
-                        img.style.transition = 'transform 0.6s ease'
-                        img.style.transform = 'translateX(0)'
-                        setTimeout(() => { sliding = false }, 600)
-                    }, 600)
-                }
-                // Fallback if image cached
-                if (nextImg.complete) nextImg.onload()
+                setTimeout(() => {
+                    img.src = images[index]
+                    overlay.classList.remove('visible')
+                }, 800)
 
                 dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
-            }, 3000)
+            }, 4000)
 
             carouselIntervals.push(intervalId)
         }, delay)
