@@ -404,8 +404,35 @@ img {
 }
 
 /* Collection Carousel */
+.collection-carousel {
+    position: relative;
+    overflow: hidden;
+}
+
 .collection-carousel img.carousel-active {
-    transition: opacity 0.25s ease;
+    position: relative;
+    z-index: 1;
+    transition: transform 0.5s ease;
+}
+
+.collection-carousel img.carousel-active.carousel-slide-out {
+    transform: translateX(-100%);
+}
+
+.collection-carousel img.carousel-next {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 2;
+    transform: translateX(100%);
+    animation: slideInFromRight 0.5s ease forwards;
+}
+
+@keyframes slideInFromRight {
+    to { transform: translateX(0); }
 }
 
 .carousel-dots-mini {

@@ -88,7 +88,7 @@ window.addEventListener('resize', () => {
 const preloader = document.getElementById('preloader')
 
 gsap.timeline()
-    .to({}, { duration: 2 })
+    .to({}, { duration: 0.8 })
     .to(preloader, {
         opacity: 0,
         duration: 0.5,
@@ -331,7 +331,7 @@ function stopCollectionCarousels() {
 function startCollectionCarousels() {
     stopCollectionCarousels()
 
-    document.querySelectorAll('.collection-carousel').forEach(container => {
+    document.querySelectorAll('.collection-carousel').forEach((container, cardIndex) => {
         const images = JSON.parse(container.dataset.images || '[]')
         if (images.length <= 1) return
 
@@ -339,18 +339,41 @@ function startCollectionCarousels() {
         const dots = container.querySelectorAll('.carousel-dot-mini')
         if (!img) return
 
-        let index = 0
-        const intervalId = setInterval(() => {
-            index = (index + 1) % images.length
-            img.style.opacity = '0'
-            setTimeout(() => {
-                img.src = images[index]
-                img.style.opacity = '1'
-            }, 250)
-            dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
-        }, 3000)
+        // Preload all images
+        images.forEach(src => { const i = new Image(); i.src = src })
 
-        carouselIntervals.push(intervalId)
+        let index = 0
+        // Stagger start so cards don't all switch at the same time
+        const delay = cardIndex * 800
+        const timeoutId = setTimeout(() => {
+            const intervalId = setInterval(() => {
+                index = (index + 1) % images.length
+                const nextSrc = images[index]
+
+                // Create next image, slide in from right
+                const nextImg = document.createElement('img')
+                nextImg.src = nextSrc
+                nextImg.alt = img.alt
+                nextImg.className = 'carousel-next'
+                container.appendChild(nextImg)
+
+                // Animate: current slides left, next slides in
+                img.classList.add('carousel-slide-out')
+                nextImg.classList.add('carousel-slide-in')
+
+                setTimeout(() => {
+                    img.src = nextSrc
+                    img.classList.remove('carousel-slide-out')
+                    nextImg.remove()
+                }, 500)
+
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
+            }, 3500)
+
+            carouselIntervals.push(intervalId)
+        }, delay)
+
+        carouselIntervals.push(timeoutId)
     })
 }
 
