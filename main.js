@@ -404,7 +404,7 @@ function renderCategoryView(collection, animateCards = true) {
                         ? `<img src="${imageUrl}" alt="${escapeHtml(item.name)}">`
                         : `<div class="no-image"><span>Görsel Yok</span></div>`
                     }
-                    ${item.images.length > 1 ? `<span class="image-count-badge">${item.images.length} foto</span>` : ''}
+                    ${item.images.length > 1 ? `<span class="image-count-badge">${item.images.length} resim</span>` : ''}
                 </div>
                 <div class="product-info">
                     <h3>${escapeHtml(item.name)}</h3>
