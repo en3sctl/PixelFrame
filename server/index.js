@@ -21,6 +21,9 @@ const __dirname = path.dirname(__filename);
 // Initialize Express
 const app = express();
 
+// Trust proxy (Nginx reverse proxy arkasında çalışıyor)
+app.set('trust proxy', 1);
+
 // Connect to Database
 connectDB();
 
