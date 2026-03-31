@@ -88,7 +88,7 @@ window.addEventListener('resize', () => {
 const preloader = document.getElementById('preloader')
 
 gsap.timeline()
-    .to({}, { duration: 0.8 })
+    .to({}, { duration: 0.4 })
     .to(preloader, {
         opacity: 0,
         duration: 0.5,
@@ -344,7 +344,7 @@ function startCollectionCarousels() {
 
         let index = 0
         // Stagger start so cards don't all switch at the same time
-        const delay = cardIndex * 800
+        const delay = cardIndex * 1500
         const timeoutId = setTimeout(() => {
             const intervalId = setInterval(() => {
                 index = (index + 1) % images.length
@@ -368,7 +368,7 @@ function startCollectionCarousels() {
                 }, 500)
 
                 dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
-            }, 3500)
+            }, 5000)
 
             carouselIntervals.push(intervalId)
         }, delay)
