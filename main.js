@@ -343,32 +343,42 @@ function startCollectionCarousels() {
         images.forEach(src => { const i = new Image(); i.src = src })
 
         let index = 0
-        // Stagger start so cards don't all switch at the same time
-        const delay = cardIndex * 1500
+        let sliding = false
+        const delay = cardIndex * 1000
         const timeoutId = setTimeout(() => {
             const intervalId = setInterval(() => {
+                if (sliding) return
+                sliding = true
                 index = (index + 1) % images.length
-                const nextSrc = images[index]
 
-                // Create next image, slide in from right
-                const nextImg = document.createElement('img')
-                nextImg.src = nextSrc
-                nextImg.alt = img.alt
-                nextImg.className = 'carousel-next'
-                container.appendChild(nextImg)
+                // Preload next image
+                const nextImg = new Image()
+                nextImg.src = images[index]
+                nextImg.onload = () => {
+                    img.style.transition = 'none'
+                    img.style.transform = 'translateX(0)'
 
-                // Animate: current slides left, next slides in
-                img.classList.add('carousel-slide-out')
-                nextImg.classList.add('carousel-slide-in')
+                    // Force reflow
+                    void img.offsetWidth
 
-                setTimeout(() => {
-                    img.src = nextSrc
-                    img.classList.remove('carousel-slide-out')
-                    nextImg.remove()
-                }, 500)
+                    img.style.transition = 'transform 0.6s ease'
+                    img.style.transform = 'translateX(-100%)'
+
+                    setTimeout(() => {
+                        img.style.transition = 'none'
+                        img.src = images[index]
+                        img.style.transform = 'translateX(100%)'
+                        void img.offsetWidth
+                        img.style.transition = 'transform 0.6s ease'
+                        img.style.transform = 'translateX(0)'
+                        setTimeout(() => { sliding = false }, 600)
+                    }, 600)
+                }
+                // Fallback if image cached
+                if (nextImg.complete) nextImg.onload()
 
                 dots.forEach((dot, i) => dot.classList.toggle('active', i === index))
-            }, 5000)
+            }, 3000)
 
             carouselIntervals.push(intervalId)
         }, delay)
