@@ -5,14 +5,15 @@ import rateLimit from 'express-rate-limit';
  * 100 requests per 15 minutes
  */
 export const apiLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 100,
   message: {
     success: false,
     message: 'Çok fazla istek gönderildi, lütfen daha sonra tekrar deneyin.'
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false }
 });
 
 /**
@@ -20,7 +21,7 @@ export const apiLimiter = rateLimit({
  * 5 requests per 15 minutes
  */
 export const loginLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 5,
   message: {
     success: false,
@@ -28,7 +29,8 @@ export const loginLimiter = rateLimit({
   },
   standardHeaders: true,
   legacyHeaders: false,
-  skipSuccessfulRequests: true // Don't count successful logins
+  skipSuccessfulRequests: true,
+  validate: { xForwardedForHeader: false }
 });
 
 /**
@@ -36,12 +38,13 @@ export const loginLimiter = rateLimit({
  * 20 uploads per 15 minutes
  */
 export const uploadLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
+  windowMs: 15 * 60 * 1000,
   max: 20,
   message: {
     success: false,
     message: 'Çok fazla dosya yükleme denemesi, lütfen bekleyin.'
   },
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  validate: { xForwardedForHeader: false }
 });
